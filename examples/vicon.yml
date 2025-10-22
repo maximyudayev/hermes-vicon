@@ -25,28 +25,63 @@
 #
 # ############
 
-from hermes.base.stream import Stream
+
+host_ip : "127.0.0.1"
+is_master_broker: True
+
+remote_subscriber_ips: []
+remote_publisher_ips: []
+
+is_remote_kill: False
+remote_kill_ip: null
 
 
-class TemplateStream(Stream):
-  """A Stream structure to extend with user-specific modality data.
-  """
-  def __init__(self, 
-               sampling_rate_hz: int = 1,
-               **_) -> None:
-    super().__init__()
+logging_spec:
+  stream_period_s     : 30
+  
+  stream_hdf5         : True
+  stream_csv          : False
+  stream_video        : False
+  stream_audio        : False
 
-    # TODO: match to device key used when publishing data.
-    self._device_name = 'sensor-emulator'
+  dump_csv            : False
+  dump_hdf5           : False
+  dump_video          : False
+  dump_audio          : False
 
-    # TODO: add desired substreams.
-    self.add_stream(device_name=self._device_name,
-                    stream_name='toa',
-                    data_type='float32',
-                    sample_size=[1],
-                    sampling_rate_hz=sampling_rate_hz,
-                    is_measure_rate_hz=True)
+  video_codec_config_filepath : "example/video_codec.yml" 
+  video_codec_num_cpu : 1
+
+  audio_codec_config_filepath : "example/audio_codec.yml" 
+  audio_codec_num_cpu : 1
 
 
-  def get_fps(self) -> dict[str, float | None]:
-    return {self._device_name: super()._get_fps(self._device_name, 'toa')}
+producer_specs:
+  - package: "vicon"
+    class: "ViconProducer"
+    settings:
+      device_mapping:
+        0 : 0
+        1 : 1
+        2 : 2
+        3 : 3
+        4 : 4
+        5 : 5
+        6 : 6
+        7 : 7
+        8 : 8
+        9 : 9
+        10 : 10
+        11 : 11
+        12 : 12
+        13 : 13
+        14 : 14
+        15 : 15
+      vicon_buffer_size: 1
+      sampling_rate_hz: 2000
+
+
+consumer_specs: []
+
+
+pipeline_specs: []

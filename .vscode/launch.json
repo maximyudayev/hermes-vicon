@@ -5,14 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Local Template",
+      "name": "Local Vicon",
       "type": "debugpy",
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "program": "examples/main.py",
       "args": [
-        "--experiment", "project=Test", "type=Template", "trial=0",
-        "--config_file", "examples/template.yml",
+        "--experiment", "project=Test", "type=Vicon", "trial=0",
+        "--config_file", "examples/vicon.yml",
         "--out_dir", "examples/"
       ],
       "env": {

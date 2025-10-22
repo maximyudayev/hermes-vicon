@@ -3,18 +3,15 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-# TODO: replace `pkgname` and version number
-name = "pysio-hermes-pkgname"
+name = "pysio-hermes-vicon"
 version = "0.0.1"
 requires-python = ">=3.7"
 authors = [
   { name="Maxim Yudayev", email="maxim.yudayev@gmail.com" },
   { name="e-Media Research Lab @ KU Leuven" },
 ]
-# TODO: update the package description
-description = "A realtime physiological sensing and edge AI processing framework"
-# TODO: add tags
-keywords = ["embedded ai", "wearables", "sensors", "streaming", "realtime processing", "physiology"]
+description = "A Vicon Data Streaming support module for HERMES"
+keywords = ["embedded ai", "wearables", "sensors", "vicon", "streaming", "realtime processing", "physiology"]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = "MIT"
 license-files = ["LICENSE"]
@@ -31,15 +28,14 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Medical Science Apps.",
   "Topic :: System :: Distributed Computing"
 ]
-# TODO: add package dependencies
 dependencies = [
-
+  "pysio-hermes",
+  # "vicon_dssdk"
 ]
 
 [project.urls]
-# TODO: update external links
 Homepage = "https://maximyudayev.github.io/hermes"
 Documentation = "https://maximyudayev.github.io/hermes"
-Repository = "https://github.com/maximyudayev/hermes.git"
+Repository = "https://github.com/maximyudayev/hermes-vicon.git"
 Issues = "https://github.com/maximyudayev/hermes/issues"
-Changelog = "https://github.com/maximyudayev/hermes/blob/main/CHANGELOG.md"
+Changelog = "https://github.com/maximyudayev/hermes-vicon/blob/main/CHANGELOG.md"
