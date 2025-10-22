@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# TODO: replace `pkgname` and version number
+name = "pysio-hermes-pkgname"
+version = "0.0.1"
+requires-python = ">=3.7"
+authors = [
+  { name="Maxim Yudayev", email="maxim.yudayev@gmail.com" },
+  { name="e-Media Research Lab @ KU Leuven" },
+]
+# TODO: update the package description
+description = "A realtime physiological sensing and edge AI processing framework"
+# TODO: add tags
+keywords = ["embedded ai", "wearables", "sensors", "streaming", "realtime processing", "physiology"]
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "MIT"
+license-files = ["LICENSE"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Healthcare Industry",
+  "Intended Audience :: Education",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+  "Topic :: System :: Distributed Computing"
+]
+# TODO: add package dependencies
+dependencies = [
+
+]
+
+[project.urls]
+# TODO: update external links
+Homepage = "https://maximyudayev.github.io/hermes"
+Documentation = "https://maximyudayev.github.io/hermes"
+Repository = "https://github.com/maximyudayev/hermes.git"
+Issues = "https://github.com/maximyudayev/hermes/issues"
+Changelog = "https://github.com/maximyudayev/hermes/blob/main/CHANGELOG.md"

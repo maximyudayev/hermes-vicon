@@ -1,0 +1,26 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Local Template",
+      "type": "debugpy",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "examples/main.py",
+      "args": [
+        "--experiment", "project=Test", "type=Template", "trial=0",
+        "--config_file", "examples/template.yml",
+        "--out_dir", "examples/"
+      ],
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "console": "integratedTerminal",
+      "subProcess": true,
+      "justMyCode": false
+    },
+  ]
+}
