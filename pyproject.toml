@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pysio-hermes-vicon"
-version = "0.0.1"
+dynamic = ["version"]
 requires-python = ">=3.7"
 authors = [
   { name="Maxim Yudayev", email="maxim.yudayev@gmail.com" },
@@ -32,6 +32,9 @@ dependencies = [
   "pysio-hermes",
   # "vicon_dssdk"
 ]
+
+[tool.setuptools.dynamic]
+version = {attr = "hermes.vicon.__version__.__version__"}
 
 [project.urls]
 Homepage = "https://maximyudayev.github.io/hermes"
