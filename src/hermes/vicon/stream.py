@@ -1,6 +1,6 @@
 ############
 #
-# Copyright (c) 2024 Maxim Yudayev and KU Leuven eMedia Lab
+# Copyright (c) 2024-2025 Maxim Yudayev and KU Leuven eMedia Lab
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,56 +31,77 @@ from hermes.base.stream import Stream
 
 
 class ViconStream(Stream):
-  """A structure to store data streams from the Vicon system.
-  """
-  def __init__(self,
-               device_mapping: dict[str,str],
-               sampling_rate_hz: int = 2000,
-               timesteps_before_solidified: int = 0,
-               update_interval_ms: int = 100,
-               **_) -> None:
-    super().__init__()
-    self._device_mapping = device_mapping
-    self._num_devices = len(device_mapping)
-    self._sampling_rate_hz = sampling_rate_hz
-    self._timesteps_before_solidified = timesteps_before_solidified
-    self._update_interval_ms = update_interval_ms
+    """A structure to store data streams from the Vicon system."""
 
-    self._define_data_notes()
+    def __init__(
+        self,
+        device_mapping: dict[str, str],
+        sampling_rate_hz: int = 2000,
+        timesteps_before_solidified: int = 0,
+        update_interval_ms: int = 100,
+        **_
+    ) -> None:
+        super().__init__()
+        self._device_mapping = device_mapping
+        self._num_devices = len(device_mapping)
+        self._sampling_rate_hz = sampling_rate_hz
+        self._timesteps_before_solidified = timesteps_before_solidified
+        self._update_interval_ms = update_interval_ms
 
-    self.add_stream(device_name='vicon-data',
-                    stream_name='emg',
-                    data_type='float32',
-                    sample_size=(self._num_devices,),
-                    sampling_rate_hz=sampling_rate_hz,
-                    is_measure_rate_hz=True)
-    self.add_stream(device_name='vicon-data',
-                    stream_name='counter',
-                    data_type='float32',
-                    sample_size=(1,),
-                    sampling_rate_hz=sampling_rate_hz)
-    self.add_stream(device_name='vicon-data',
-                    stream_name='latency',
-                    data_type='float32',
-                    sample_size=(1,),
-                    sampling_rate_hz=sampling_rate_hz)
+        self._define_data_notes()
 
+        self.add_stream(
+            device_name="vicon-data",
+            stream_name="emg",
+            data_type="float32",
+            sample_size=(self._num_devices,),
+            sampling_rate_hz=sampling_rate_hz,
+            is_measure_rate_hz=True,
+        )
+        self.add_stream(
+            device_name="vicon-data",
+            stream_name="counter",
+            data_type="float32",
+            sample_size=(1,),
+            sampling_rate_hz=sampling_rate_hz,
+        )
+        self.add_stream(
+            device_name="vicon-data",
+            stream_name="latency",
+            data_type="float32",
+            sample_size=(1,),
+            sampling_rate_hz=sampling_rate_hz,
+        )
 
-  def get_fps(self) -> dict[str, float | None]:
-    return {'vicon-data': super()._get_fps('vicon-data', 'emg')}
+    def get_fps(self) -> dict[str, float | None]:
+        return {"vicon-data": super()._get_fps("vicon-data", "emg")}
 
+    def _define_data_notes(self) -> None:
+        self._data_notes = {}
+        self._data_notes.setdefault("vicon-data", {})
 
-  def _define_data_notes(self) -> None:
-    self._data_notes = {}
-    self._data_notes.setdefault('vicon-data', {})
-
-    self._data_notes['vicon-data']['emg'] = OrderedDict([
-      ('Description', 'Analog EMG measurements captured using the DAC of the Vicon system.'),
-      (Stream.metadata_data_headings_key, list(self._device_mapping.keys())),
-    ])
-    self._data_notes['vicon-data']['counter'] = OrderedDict([
-      ('Description', 'Block frame number for a burst of EMG measurements, sent in 10ms bursts.'),
-    ])
-    self._data_notes['vicon-data']['latency'] = OrderedDict([
-      ('Description', 'Transmission delay estimate from Vicon w.r.t. the on-sensor acquisition time.'),
-    ])
+        self._data_notes["vicon-data"]["emg"] = OrderedDict(
+            [
+                (
+                    "Description",
+                    "Analog EMG measurements captured using the DAC of the Vicon system.",
+                ),
+                (Stream.metadata_data_headings_key, list(self._device_mapping.keys())),
+            ]
+        )
+        self._data_notes["vicon-data"]["counter"] = OrderedDict(
+            [
+                (
+                    "Description",
+                    "Block frame number for a burst of EMG measurements, sent in 10ms bursts.",
+                ),
+            ]
+        )
+        self._data_notes["vicon-data"]["latency"] = OrderedDict(
+            [
+                (
+                    "Description",
+                    "Transmission delay estimate from Vicon w.r.t. the on-sensor acquisition time.",
+                ),
+            ]
+        )
