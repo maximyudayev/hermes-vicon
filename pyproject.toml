@@ -8,7 +8,7 @@ dynamic = ["version"]
 requires-python = ">=3.7"
 authors = [
   { name="Maxim Yudayev", email="maxim.yudayev@gmail.com" },
-  { name="e-Media Research Lab @ KU Leuven" },
+  { name="e-Media Research Lab @ KU Leuven", email="emedia@kuleuven.be" },
 ]
 description = "A Vicon Data Streaming support module for HERMES"
 keywords = ["embedded ai", "wearables", "sensors", "vicon", "streaming", "realtime processing", "physiology"]
@@ -30,7 +30,6 @@ classifiers = [
 ]
 dependencies = [
   "pysio-hermes",
-  # "vicon_dssdk"
 ]
 
 [tool.setuptools.dynamic]
