@@ -20,7 +20,7 @@ pip install -e hermes-vicon
 ```
 
 ## Usage
-Using the device follows the standard [configuration file specification](https://maximyudayev.github.io/hermes/) process of HERMES nodes.
+Using the device follows the standard [configuration file specification](https://yudayev.com/hermes) process of HERMES nodes.
 
 Turn on Vicon Nexus desktop application to configure all capturing devices and their names. Fill in those sensor mappings exactly the same way in your HERMES YAML file.
 

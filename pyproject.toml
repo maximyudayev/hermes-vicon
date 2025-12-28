@@ -36,8 +36,8 @@ dependencies = [
 version = {attr = "hermes.vicon.__version__.__version__"}
 
 [project.urls]
-Homepage = "https://maximyudayev.github.io/hermes"
-Documentation = "https://maximyudayev.github.io/hermes"
+Homepage = "https://yudayev.com/hermes"
+Documentation = "https://yudayev.com/hermes"
 Repository = "https://github.com/maximyudayev/hermes-vicon.git"
 Issues = "https://github.com/maximyudayev/hermes/issues"
 Changelog = "https://github.com/maximyudayev/hermes-vicon/blob/main/CHANGELOG.md"
