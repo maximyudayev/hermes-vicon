@@ -31,6 +31,7 @@ is_master_broker: True
 
 remote_subscriber_ips: []
 remote_publisher_ips: []
+connections: []
 
 is_remote_kill: False
 remote_kill_ip: null
@@ -49,8 +50,8 @@ logging_spec:
   dump_video          : False
   dump_audio          : False
 
-video_codec_config_filepath : "examples/video_codec.yml" 
-audio_codec_config_filepath : "examples/audio_codec.yml" 
+video_codec_config_filepath : null
+audio_codec_config_filepath : null
 
 
 producer_specs:
