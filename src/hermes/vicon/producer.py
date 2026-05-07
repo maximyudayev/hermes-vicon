@@ -46,12 +46,9 @@ from hermes.vicon.stream import ViconStream
 class ViconProducer(Producer):
     """A class for streaming data from Vicon system."""
 
-    @classmethod
-    def _log_source_tag(cls) -> str:
-        return "vicon"
-
     def __init__(
         self,
+        topic: str,
         host_ip: str,
         logging_spec: LoggingSpec,
         device_mapping: dict[str, str],
@@ -72,6 +69,7 @@ class ViconProducer(Producer):
         }
 
         super().__init__(
+            topic=topic,
             host_ip=host_ip,
             stream_out_spec=stream_out_spec,
             logging_spec=logging_spec,
@@ -154,7 +152,7 @@ class ViconProducer(Producer):
                 ).T  # TODO: check the dimension ordering -> should loop over time.
 
                 # NOTE: can now pass a block of samples into the Stream object, as long as the first dimension is batch over time.
-                tag: str = "%s.data" % self._log_source_tag()
+                tag: str = "%s.data" % self.topic
                 data = {
                     "emg": sample_block,
                     "counter": frame_number,

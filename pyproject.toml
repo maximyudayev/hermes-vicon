@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pysio-hermes-vicon"
-dynamic = ["version"]
+version = "0.0.1"
 requires-python = ">=3.7"
 authors = [
   { name="Maxim Yudayev", email="maxim.yudayev@gmail.com" },
@@ -29,11 +29,8 @@ classifiers = [
   "Topic :: System :: Distributed Computing"
 ]
 dependencies = [
-  "pysio-hermes",
+  "pysio-hermes>=0.3.0",
 ]
-
-[tool.setuptools.dynamic]
-version = {attr = "hermes.vicon.__version__.__version__"}
 
 [project.urls]
 Homepage = "https://yudayev.com/hermes"
