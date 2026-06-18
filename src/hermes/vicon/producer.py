@@ -63,7 +63,7 @@ class ViconProducer(Producer):
         port_pub: Optional[str] = PORT_BACKEND,
         port_sync: Optional[str] = PORT_SYNC_HOST,
         port_killsig: Optional[str] = PORT_KILL,
-        **_
+        **_,
     ):
         self._vicon_ip = vicon_ip
         self._vicon_port = vicon_port
@@ -137,10 +137,18 @@ class ViconProducer(Producer):
         #       _devices contains just 1 device.
         if self._device in map(lambda x: x[0], devices):
             # NOTE: New Delsys Trigno does not save sensor names persistently, but numbers them.
-            self._devices = dict(map(lambda x: (x[0], int(re.findall(r'\d+', x[0])[0])), self._client.GetDeviceOutputDetails("EMG")))
+            self._devices = dict(
+                map(
+                    lambda x: (x[0], int(re.findall(r"\d+", x[0])[0])),
+                    self._client.GetDeviceOutputDetails("EMG"),
+                )
+            )
             return True
         else:
-            print("EMG devices name in Nexus is not set to 'EMG'. Update to continue.", flush=True)
+            print(
+                "EMG devices name in Nexus is not set to 'EMG'. Update to continue.",
+                flush=True,
+            )
             return False
 
     def _keep_samples(self) -> None:
@@ -156,11 +164,13 @@ class ViconProducer(Producer):
             toa_s = get_time()
             frame_number = self._client.GetFrameNumber()
 
-            values = [[]]*len(self._devices)
+            values = [[]] * len(self._devices)
             device_output_details = self._client.GetDeviceOutputDetails(self._device)
             for output_name, component_name, unit in device_output_details:
-                subsamples, occluded = self._client.GetDeviceOutputValues(self._device, output_name, component_name)
-                values[self._devices[output_name]-1] = subsamples
+                subsamples, occluded = self._client.GetDeviceOutputValues(
+                    self._device, output_name, component_name
+                )
+                values[self._devices[output_name] - 1] = subsamples
 
             sample_block = np.array(values, dtype=np.float64).T
 
@@ -170,9 +180,7 @@ class ViconProducer(Producer):
                 "counter": np.array([[frame_number]], dtype=np.uint32),
                 "toa_s": np.zeros([sample_block.shape[0], 1], dtype=np.float64) + toa_s,
             }
-            self._publish(
-                tag=tag, process_time_s=get_time(), data={"vicon-data": data}
-            )
+            self._publish(tag=tag, process_time_s=get_time(), data={"vicon-data": data})
         except ViconDataStream.DataStreamException as e:
             print(e)
         finally:

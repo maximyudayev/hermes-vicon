@@ -42,7 +42,7 @@ class ViconStream(Stream):
         batch_send_rate_hz: Optional[int] = 100,
         timesteps_before_solidified: Optional[int] = 0,
         update_interval_ms: Optional[int] = 100,
-        **_
+        **_,
     ) -> None:
         super().__init__()
 
@@ -95,7 +95,7 @@ class ViconStream(Stream):
             [
                 (
                     "Notes",
-                    f"Analog surface EMG measurements captured using the DAC of the Vicon system. Sampled at {self._sampling_rate_hz} Hz, received in bursts at {self._batch_send_rate_hz} Hz."
+                    f"Analog surface EMG measurements captured using the DAC of the Vicon system. Sampled at {self._sampling_rate_hz} Hz, received in bursts at {self._batch_send_rate_hz} Hz.",
                 ),
                 (Stream.metadata_data_headings_key, list(self._device_mapping.keys())),
             ]

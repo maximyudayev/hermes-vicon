@@ -3,7 +3,7 @@
 Support package to interface the realtime [Vicon](https://www.vicon.com/) commercial sensing system data in [HERMES](https://github.com/maximyudayev/hermes), through the [DataStream SDK](https://www.vicon.com/software/datastream-sdk/).
 
 ## Installation
-Node available under the same HERMES namespace of `hermes.vicon` as `ViconProducer`. Download and unarchive the official [DataStream SDK](https://www.vicon.com/software/datastream-sdk/). Install it into the Python environment with:
+Node available under the same HERMES namespace of `hermes.vicon` as `ViconProducer`. Download and unarchive the official [DataStream SDK](https://www.vicon.com/software/datastream-sdk/). Install it into the Python environment with or according to the [official instructions](https://help.vicon.com/space/DSSDK112/10027198/Vicon+DataStream+SDK+Quick+Start+Guide+for+Python):
 ```bash
 pip install <path_to_downloaded_[vicon_dssdk]_folder>
 ```
