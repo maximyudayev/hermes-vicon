@@ -26,6 +26,7 @@
 # ############
 
 from collections import OrderedDict
+from typing import Optional
 
 from hermes.base.stream import Stream
 
@@ -35,16 +36,20 @@ class ViconStream(Stream):
 
     def __init__(
         self,
-        device_mapping: dict[str, str],
-        sampling_rate_hz: int = 2000,
-        timesteps_before_solidified: int = 0,
-        update_interval_ms: int = 100,
+        device_mapping: dict,
+        buf_len: Optional[int] = 100000,
+        sampling_rate_hz: Optional[int] = 2000,
+        batch_send_rate_hz: Optional[int] = 100,
+        timesteps_before_solidified: Optional[int] = 0,
+        update_interval_ms: Optional[int] = 100,
         **_
     ) -> None:
         super().__init__()
+
         self._device_mapping = device_mapping
         self._num_devices = len(device_mapping)
         self._sampling_rate_hz = sampling_rate_hz
+        self._batch_send_rate_hz = batch_send_rate_hz
         self._timesteps_before_solidified = timesteps_before_solidified
         self._update_interval_ms = update_interval_ms
 
@@ -54,22 +59,25 @@ class ViconStream(Stream):
             device_name="vicon-data",
             stream_name="emg",
             data_type="float32",
-            sample_size=(self._num_devices,),
+            sample_size=[self._num_devices],
+            buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
             is_measure_rate_hz=True,
         )
         self.add_stream(
             device_name="vicon-data",
             stream_name="counter",
-            data_type="float32",
-            sample_size=(1,),
+            data_type="uint32",
+            sample_size=[1],
+            buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
         )
         self.add_stream(
             device_name="vicon-data",
-            stream_name="latency",
-            data_type="float32",
-            sample_size=(1,),
+            stream_name="toa_s",
+            data_type="float64",
+            sample_size=[1],
+            buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
         )
 
@@ -83,8 +91,8 @@ class ViconStream(Stream):
         self._data_notes["vicon-data"]["emg"] = OrderedDict(
             [
                 (
-                    "Description",
-                    "Analog EMG measurements captured using the DAC of the Vicon system.",
+                    "Notes",
+                    f"Analog surface EMG measurements captured using the DAC of the Vicon system. Sampled at {self._sampling_rate_hz} Hz, received in bursts at {self._batch_send_rate_hz} Hz."
                 ),
                 (Stream.metadata_data_headings_key, list(self._device_mapping.keys())),
             ]
@@ -92,16 +100,16 @@ class ViconStream(Stream):
         self._data_notes["vicon-data"]["counter"] = OrderedDict(
             [
                 (
-                    "Description",
-                    "Block frame number for a burst of EMG measurements, sent in 10ms bursts.",
+                    "Notes",
+                    f"Monotonically increasing index of the sensor samples arriving in chunks. Maps one-to-one for every individual sensor measurement.",
                 ),
             ]
         )
-        self._data_notes["vicon-data"]["latency"] = OrderedDict(
+        self._data_notes["vicon-data"]["toa_s"] = OrderedDict(
             [
                 (
-                    "Description",
-                    "Transmission delay estimate from Vicon w.r.t. the on-sensor acquisition time.",
+                    "Notes",
+                    f"Time of arrival of the samples w.r.t. system clock. Repeated for samples arrived in the same burst. Changes at {self._batch_send_rate_hz} Hz",
                 ),
             ]
         )

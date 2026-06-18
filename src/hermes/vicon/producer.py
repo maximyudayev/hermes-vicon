@@ -26,6 +26,7 @@
 # ############
 
 import time
+from typing import Optional
 from hermes.utils.types import LoggingSpec
 import numpy as np
 from vicon_dssdk import ViconDataStream
@@ -51,21 +52,27 @@ class ViconProducer(Producer):
         topic: str,
         host_ip: str,
         logging_spec: LoggingSpec,
-        device_mapping: dict[str, str],
-        sampling_rate_hz: int = 2000,
-        vicon_buffer_size: int = 1,
-        vicon_ip: str = DNS_LOCALHOST,
-        port_pub: str = PORT_BACKEND,
-        port_sync: str = PORT_SYNC_HOST,
-        port_killsig: str = PORT_KILL,
+        device_mapping: dict,
+        sampling_rate_hz: Optional[int] = 2000,
+        batch_send_rate_hz: Optional[int] = 100,
+        vicon_buffer_size: Optional[int] = 1,
+        buf_len: Optional[int] = 100000,
+        vicon_ip: Optional[str] = DNS_LOCALHOST,
+        vicon_port: Optional[str] = PORT_VICON,
+        port_pub: Optional[str] = PORT_BACKEND,
+        port_sync: Optional[str] = PORT_SYNC_HOST,
+        port_killsig: Optional[str] = PORT_KILL,
         **_
     ):
         self._vicon_ip = vicon_ip
+        self._vicon_port = vicon_port
         self._vicon_buffer_size = vicon_buffer_size
 
         stream_out_spec = {
             "sampling_rate_hz": sampling_rate_hz,
+            "batch_send_rate_hz": batch_send_rate_hz,
             "device_mapping": device_mapping,
+            "buf_len": buf_len,
         }
 
         super().__init__(
@@ -73,7 +80,7 @@ class ViconProducer(Producer):
             host_ip=host_ip,
             stream_out_spec=stream_out_spec,
             logging_spec=logging_spec,
-            sampling_rate_hz=100,  # Vicon sends packets in bursts at 100 Hz.
+            sampling_rate_hz=batch_send_rate_hz,
             port_pub=port_pub,
             port_sync=port_sync,
             port_killsig=port_killsig,
@@ -88,14 +95,16 @@ class ViconProducer(Producer):
 
     def _connect(self) -> bool:
         self._client = ViconDataStream.Client()
-        print("Connecting Vicon")
+
+        print("Connecting to Vicon", flush=True)
+
         while not self._client.IsConnected():
-            self._client.Connect("%s:%s" % (self._vicon_ip, PORT_VICON))
+            self._client.Connect("%s:%s" % (self._vicon_ip, self._vicon_port))
 
         # Check setting the buffer size works.
         self._client.SetBufferSize(self._vicon_buffer_size)
 
-        # Enable data output.
+        # Enable EMG data output.
         self._client.EnableDeviceData()
 
         # Set server push mode,
@@ -123,7 +132,7 @@ class ViconProducer(Producer):
         # Keep only EMG. This device was renamed in the Nexus SDK.
         # NOTE: When using analog connector and setting all channels as single device,
         #       _devices contains just 1 device.
-        self._devices = [d for d in devices if d[0] == "Cometa EMG"]
+        self._devices = [d for d in devices if d[0] == "EMG"]
         return True
 
     def _keep_samples(self) -> None:
@@ -135,32 +144,35 @@ class ViconProducer(Producer):
         try:
             # Grabbing new frame from Vicon server will raise exception once it closed.
             self._client.GetFrame()
-            process_time_s = get_time()
-            frame_number = self._client.GetFrameNumber()
 
+            toa_s = get_time()
+            frame_number = self._client.GetFrameNumber()
+            frame_timecode = self._client.GetTimecode()
+
+            # NOTE: New Delsys Trigno does not save sensor names and IDs persistently.
+            # TODO: Test the new Vicon Datastream SDK API with HERMES>=0.4.0 batch saving functionality.
+            samples = []
             for device_name, device_type in self._devices:
                 device_output_details = self._client.GetDeviceOutputDetails(device_name)
 
-                samples = []
                 for output_name, component_name, unit in device_output_details:
                     values, occluded = self._client.GetDeviceOutputValues(
                         device_name, output_name, component_name
                     )
                     samples.append(values)
-                sample_block = np.array(
-                    samples
-                ).T  # TODO: check the dimension ordering -> should loop over time.
 
-                # NOTE: can now pass a block of samples into the Stream object, as long as the first dimension is batch over time.
-                tag: str = "%s.data" % self.topic
-                data = {
-                    "emg": sample_block,
-                    "counter": frame_number,
-                    # 'latency': 0.0, # TODO: get latency measurement from Vicon?
-                }
-                self._publish(
-                    tag=tag, process_time_s=process_time_s, data={"vicon-data": data}
-                )
+            sample_block = np.array(samples).T
+
+            tag: str = "%s.data" % self.topic
+            data = {
+                "emg": sample_block,
+                "timecode": np.array([frame_timecode], dtype=np.float64), 
+                "counter": np.array([frame_number], dtype=np.uint32),
+                "toa_s": np.zeros([sample_block.shape[0]], dtype=np.float64) + toa_s,
+            }
+            self._publish(
+                tag=tag, process_time_s=get_time(), data={"vicon-data": data}
+            )
         except ViconDataStream.DataStreamException as e:
             print(e)
         finally:
