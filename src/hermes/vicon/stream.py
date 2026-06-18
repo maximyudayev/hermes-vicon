@@ -58,11 +58,12 @@ class ViconStream(Stream):
         self.add_stream(
             device_name="vicon-data",
             stream_name="emg",
-            data_type="float32",
+            data_type="float64",
             sample_size=[self._num_devices],
             buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
             is_measure_rate_hz=True,
+            data_notes=self._data_notes["vicon-data"]["emg"],
         )
         self.add_stream(
             device_name="vicon-data",
@@ -71,6 +72,7 @@ class ViconStream(Stream):
             sample_size=[1],
             buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
+            data_notes=self._data_notes["vicon-data"]["counter"],
         )
         self.add_stream(
             device_name="vicon-data",
@@ -79,6 +81,7 @@ class ViconStream(Stream):
             sample_size=[1],
             buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
+            data_notes=self._data_notes["vicon-data"]["toa_s"],
         )
 
     def get_fps(self) -> dict[str, float | None]:

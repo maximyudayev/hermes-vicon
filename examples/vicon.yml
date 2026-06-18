@@ -61,40 +61,21 @@ producer_specs:
     settings:
       device_mapping:
         rectus_femoris_left:
-          channel: 0
-        rectus_femoris_right:
           channel: 1
-        tibialis_anterior_left:
+        rectus_femoris_right:
           channel: 2
-        tibialis_anterior_right:
+        tibialis_anterior_left:
           channel: 3
-        gastrocnemius_lateralis_left:
+        tibialis_anterior_right:
           channel: 4
-        gastrocnemius_lateralis_right:
+        gastrocnemius_lateralis_left:
           channel: 5
-        # sensor6:
-        #   channel: 6
-        # sensor7:
-        #   channel: 7
-        # sensor8:
-        #   channel: 8
-        # sensor9:
-        #   channel: 9
-        # sensor10:
-        #   channel: 10
-        # sensor11:
-        #   channel: 11
-        # sensor12:
-        #   channel: 12
-        # sensor13:
-        #   channel: 13
-        # sensor14:
-        #   channel: 14
-        # sensor15:
-        #   channel: 15
+        gastrocnemius_lateralis_right:
+          channel: 6
       vicon_buffer_size: 1
-      sampling_rate_hz: 2000
-      buf_len: 100000
+      sampling_rate_hz: 4370  # [2148, 4370]
+      batch_send_rate_hz: 100
+      buf_len: 10000
 
 
 consumer_specs: []

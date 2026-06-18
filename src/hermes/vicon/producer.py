@@ -26,6 +26,7 @@
 # ############
 
 import time
+import re
 from typing import Optional
 from hermes.utils.types import LoggingSpec
 import numpy as np
@@ -67,6 +68,8 @@ class ViconProducer(Producer):
         self._vicon_ip = vicon_ip
         self._vicon_port = vicon_port
         self._vicon_buffer_size = vicon_buffer_size
+        self._device_mapping = device_mapping
+        self._device = "EMG"
 
         stream_out_spec = {
             "sampling_rate_hz": sampling_rate_hz,
@@ -132,8 +135,13 @@ class ViconProducer(Producer):
         # Keep only EMG. This device was renamed in the Nexus SDK.
         # NOTE: When using analog connector and setting all channels as single device,
         #       _devices contains just 1 device.
-        self._devices = [d for d in devices if d[0] == "EMG"]
-        return True
+        if self._device in map(lambda x: x[0], devices):
+            # NOTE: New Delsys Trigno does not save sensor names persistently, but numbers them.
+            self._devices = dict(map(lambda x: (x[0], int(re.findall(r'\d+', x[0])[0])), self._client.GetDeviceOutputDetails("EMG")))
+            return True
+        else:
+            print("EMG devices name in Nexus is not set to 'EMG'. Update to continue.", flush=True)
+            return False
 
     def _keep_samples(self) -> None:
         # NOTE: If _vicon_buffer_size == 1, the server buffers only the latest measurement -> no need to flush anything.
@@ -147,28 +155,20 @@ class ViconProducer(Producer):
 
             toa_s = get_time()
             frame_number = self._client.GetFrameNumber()
-            frame_timecode = self._client.GetTimecode()
 
-            # NOTE: New Delsys Trigno does not save sensor names and IDs persistently.
-            # TODO: Test the new Vicon Datastream SDK API with HERMES>=0.4.0 batch saving functionality.
-            samples = []
-            for device_name, device_type in self._devices:
-                device_output_details = self._client.GetDeviceOutputDetails(device_name)
+            values = [[]]*len(self._devices)
+            device_output_details = self._client.GetDeviceOutputDetails(self._device)
+            for output_name, component_name, unit in device_output_details:
+                subsamples, occluded = self._client.GetDeviceOutputValues(self._device, output_name, component_name)
+                values[self._devices[output_name]-1] = subsamples
 
-                for output_name, component_name, unit in device_output_details:
-                    values, occluded = self._client.GetDeviceOutputValues(
-                        device_name, output_name, component_name
-                    )
-                    samples.append(values)
-
-            sample_block = np.array(samples).T
+            sample_block = np.array(values, dtype=np.float64).T
 
             tag: str = "%s.data" % self.topic
             data = {
                 "emg": sample_block,
-                "timecode": np.array([frame_timecode], dtype=np.float64), 
-                "counter": np.array([frame_number], dtype=np.uint32),
-                "toa_s": np.zeros([sample_block.shape[0]], dtype=np.float64) + toa_s,
+                "counter": np.array([[frame_number]], dtype=np.uint32),
+                "toa_s": np.zeros([sample_block.shape[0], 1], dtype=np.float64) + toa_s,
             }
             self._publish(
                 tag=tag, process_time_s=get_time(), data={"vicon-data": data}

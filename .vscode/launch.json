@@ -11,7 +11,7 @@
       "cwd": "${workspaceFolder}",
       "program": "examples/main.py",
       "args": [
-        "--experiment", "project=Test", "type=Vicon", "trial=0",
+        "--experiment", "project=Test", "type=Vicon", "trial=1",
         "--config_file", "examples/vicon.yml",
         "--out_dir", "examples/data"
       ],

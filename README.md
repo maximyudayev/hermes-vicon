@@ -7,6 +7,8 @@ Node available under the same HERMES namespace of `hermes.vicon` as `ViconProduc
 ```bash
 pip install <path_to_downloaded_[vicon_dssdk]_folder>
 ```
+> ![IMPORTANT]
+> Vicon Datastream SDK 1.11, 1.12, 1.13 have been tested. Only Python >= 3.7, < 3.14 are supported at the moment.
 
 ### From PyPI
 ```bash

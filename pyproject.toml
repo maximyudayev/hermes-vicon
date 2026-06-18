@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pysio-hermes-vicon"
 version = "0.0.1"
-requires-python = ">=3.7"
+requires-python = ">=3.7,<3.14"
 authors = [
   { name="Maxim Yudayev", email="maxim.yudayev@gmail.com" },
   { name="e-Media Research Lab @ KU Leuven", email="emedia@kuleuven.be" },
