@@ -1,2 +1,2 @@
-from .stream import ViconStream
+from .data_container import ViconDataContainer
 from .producer import ViconProducer

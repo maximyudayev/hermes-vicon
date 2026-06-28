@@ -39,6 +39,7 @@ remote_kill_ip: null
 
 logging_spec:
   stream_period_s     : 30
+  is_quiet            : False
 
   stream_hdf5         : True
   stream_csv          : False
@@ -75,7 +76,7 @@ producer_specs:
       vicon_buffer_size: 1
       sampling_rate_hz: 4370  # [2148, 4370]
       batch_send_rate_hz: 100
-      buf_len: 10000
+      buf_len: 100000
 
 
 consumer_specs: []

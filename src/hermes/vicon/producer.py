@@ -42,7 +42,7 @@ from hermes.utils.zmq_utils import (
 )
 from hermes.utils.time_utils import get_time
 
-from hermes.vicon.stream import ViconStream
+from hermes.vicon.data_container import ViconDataContainer
 
 
 class ViconProducer(Producer):
@@ -54,7 +54,7 @@ class ViconProducer(Producer):
         host_ip: str,
         logging_spec: LoggingSpec,
         device_mapping: dict,
-        sampling_rate_hz: Optional[int] = 2000,
+        sampling_rate_hz: Optional[int] = 4370,
         batch_send_rate_hz: Optional[int] = 100,
         vicon_buffer_size: Optional[int] = 1,
         buf_len: Optional[int] = 100000,
@@ -71,7 +71,7 @@ class ViconProducer(Producer):
         self._device_mapping = device_mapping
         self._device = "EMG"
 
-        stream_out_spec = {
+        data_out_spec = {
             "sampling_rate_hz": sampling_rate_hz,
             "batch_send_rate_hz": batch_send_rate_hz,
             "device_mapping": device_mapping,
@@ -81,7 +81,7 @@ class ViconProducer(Producer):
         super().__init__(
             topic=topic,
             host_ip=host_ip,
-            stream_out_spec=stream_out_spec,
+            data_out_spec=data_out_spec,
             logging_spec=logging_spec,
             sampling_rate_hz=batch_send_rate_hz,
             port_pub=port_pub,
@@ -90,8 +90,8 @@ class ViconProducer(Producer):
         )
 
     @classmethod
-    def create_stream(cls, stream_spec: dict) -> ViconStream:
-        return ViconStream(**stream_spec)
+    def create_data_container(cls, data_spec: dict) -> ViconDataContainer:
+        return ViconDataContainer(**data_spec)
 
     def _ping_device(self) -> None:
         return None
@@ -180,7 +180,7 @@ class ViconProducer(Producer):
                 "counter": np.array([[frame_number]], dtype=np.uint32),
                 "toa_s": np.zeros([sample_block.shape[0], 1], dtype=np.float64) + toa_s,
             }
-            self._publish(tag=tag, process_time_s=get_time(), data={"vicon-data": data})
+            self._publish(tag=tag, process_time_s=get_time(), data={"vicon_data": data})
         except ViconDataStream.DataStreamException as e:
             print(e)
         finally:

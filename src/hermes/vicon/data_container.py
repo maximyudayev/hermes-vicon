@@ -28,17 +28,17 @@
 from collections import OrderedDict
 from typing import Optional
 
-from hermes.base.stream import Stream
+from hermes.base.data_container import DataContainer
 
 
-class ViconStream(Stream):
+class ViconDataContainer(DataContainer):
     """A structure to store data streams from the Vicon system."""
 
     def __init__(
         self,
         device_mapping: dict,
         buf_len: Optional[int] = 100000,
-        sampling_rate_hz: Optional[int] = 2000,
+        sampling_rate_hz: Optional[int] = 4370,
         batch_send_rate_hz: Optional[int] = 100,
         timesteps_before_solidified: Optional[int] = 0,
         update_interval_ms: Optional[int] = 100,
@@ -55,52 +55,52 @@ class ViconStream(Stream):
 
         self._define_data_notes()
 
-        self.add_stream(
-            device_name="vicon-data",
-            stream_name="emg",
+        self.add_channel(
+            bundle_name="vicon_data",
+            channel_name="emg",
             data_type="float64",
             sample_size=[self._num_devices],
             buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
             is_measure_rate_hz=True,
-            data_notes=self._data_notes["vicon-data"]["emg"],
+            data_notes=self._data_notes["vicon_data"]["emg"],
         )
-        self.add_stream(
-            device_name="vicon-data",
-            stream_name="counter",
+        self.add_channel(
+            bundle_name="vicon_data",
+            channel_name="counter",
             data_type="uint32",
             sample_size=[1],
             buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
-            data_notes=self._data_notes["vicon-data"]["counter"],
+            data_notes=self._data_notes["vicon_data"]["counter"],
         )
-        self.add_stream(
-            device_name="vicon-data",
-            stream_name="toa_s",
+        self.add_channel(
+            bundle_name="vicon_data",
+            channel_name="toa_s",
             data_type="float64",
             sample_size=[1],
             buf_len=buf_len,
             sampling_rate_hz=sampling_rate_hz,
-            data_notes=self._data_notes["vicon-data"]["toa_s"],
+            data_notes=self._data_notes["vicon_data"]["toa_s"],
         )
 
     def get_fps(self) -> dict[str, float | None]:
-        return {"vicon-data": super()._get_fps("vicon-data", "emg")}
+        return {"vicon_data": super()._get_fps("vicon_data", "emg")}
 
     def _define_data_notes(self) -> None:
         self._data_notes = {}
-        self._data_notes.setdefault("vicon-data", {})
+        self._data_notes.setdefault("vicon_data", {})
 
-        self._data_notes["vicon-data"]["emg"] = OrderedDict(
+        self._data_notes["vicon_data"]["emg"] = OrderedDict(
             [
                 (
                     "Notes",
                     f"Analog surface EMG measurements captured using the DAC of the Vicon system. Sampled at {self._sampling_rate_hz} Hz, received in bursts at {self._batch_send_rate_hz} Hz.",
                 ),
-                (Stream.metadata_data_headings_key, list(self._device_mapping.keys())),
+                (DataContainer.metadata_data_headings_key, list(self._device_mapping.keys())),
             ]
         )
-        self._data_notes["vicon-data"]["counter"] = OrderedDict(
+        self._data_notes["vicon_data"]["counter"] = OrderedDict(
             [
                 (
                     "Notes",
@@ -108,7 +108,7 @@ class ViconStream(Stream):
                 ),
             ]
         )
-        self._data_notes["vicon-data"]["toa_s"] = OrderedDict(
+        self._data_notes["vicon_data"]["toa_s"] = OrderedDict(
             [
                 (
                     "Notes",
