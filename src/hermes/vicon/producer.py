@@ -50,7 +50,7 @@ class ViconProducer(Producer):
 
     def __init__(
         self,
-        topic: str,
+        node_id: str,
         host_ip: str,
         logging_spec: LoggingSpec,
         device_mapping: dict,
@@ -79,7 +79,7 @@ class ViconProducer(Producer):
         }
 
         super().__init__(
-            topic=topic,
+            node_id=node_id,
             host_ip=host_ip,
             data_out_spec=data_out_spec,
             logging_spec=logging_spec,
@@ -174,13 +174,12 @@ class ViconProducer(Producer):
 
             sample_block = np.array(values, dtype=np.float64).T
 
-            tag: str = "%s.data" % self.topic
             data = {
                 "emg": sample_block,
                 "counter": np.array([[frame_number]], dtype=np.uint32),
                 "toa_s": np.zeros([sample_block.shape[0], 1], dtype=np.float64) + toa_s,
             }
-            self._publish(tag=tag, process_time_s=get_time(), data={"vicon_data": data})
+            self._publish(process_time_s=get_time(), new_data={"vicon_data": data})
         except ViconDataStream.DataStreamException as e:
             print(e)
         finally:

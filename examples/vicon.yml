@@ -58,7 +58,7 @@ audio_codec_config_filepath: null
 producer_specs:
   - package: "vicon"
     class: "ViconProducer"
-    topic: "vicon"
+    node_id: "vicon"
     settings:
       device_mapping:
         rectus_femoris_left:
