@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [0.3.0](https://github.com/maximyudayev/hermes-vicon/releases/tag/0.3.0) - 2026-07-12
+
+<small>[Compare with 0.2.0](https://github.com/maximyudayev/hermes-vicon/compare/0.2.0...0.3.0)</small>
+
+### Misc
+
+- Chore: updated to match `HERMES>=0.5.0` ([3ea63ed](https://github.com/maximyudayev/hermes-vicon/commit/3ea63edd7ff3080d94b70c9bf4fcc772b75beef7) by Maxim Yudayev).
+- Hotfix: API compatibility `HERMES==0.4.2` ([169c2ae](https://github.com/maximyudayev/hermes-vicon/commit/169c2aed02c2627c07eb02c2175d86e87b4ea86a) by Maxim Yudayev).
+
 ## [0.2.0](https://github.com/maximyudayev/hermes-vicon/releases/tag/0.2.0) - 2026-06-18
 
 <small>[Compare with first commit](https://github.com/maximyudayev/hermes-vicon/compare/8cef64d43624cb33159b0e60fd7da91bd10fe2b6...0.2.0)</small>
