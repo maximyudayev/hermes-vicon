@@ -69,6 +69,7 @@ class ViconProducer(Producer):
         self._vicon_port = vicon_port
         self._vicon_buffer_size = vicon_buffer_size
         self._device_mapping = device_mapping
+        self._channel_to_id = {v["channel"]: i for i, (_, v) in enumerate(self._device_mapping.items())}
         self._device = "EMG"
 
         data_out_spec = {
@@ -170,7 +171,7 @@ class ViconProducer(Producer):
                 subsamples, occluded = self._client.GetDeviceOutputValues(
                     self._device, output_name, component_name
                 )
-                values[self._devices[output_name] - 1] = subsamples
+                values[self._channel_to_id[self._devices[output_name]]] = subsamples
 
             sample_block = np.array(values, dtype=np.float64).T
 
