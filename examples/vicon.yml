@@ -38,7 +38,7 @@ producer_specs:
       vicon_buffer_size: 1
       sampling_rate_hz: 4370  # [2148, 4370]
       batch_send_rate_hz: 100
-      buf_len: 100000
+      buf_len: 100_000
 
 
 consumer_specs: []

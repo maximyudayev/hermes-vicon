@@ -69,6 +69,7 @@ class ViconProducer(Producer):
         self._vicon_port = vicon_port
         self._vicon_buffer_size = vicon_buffer_size
         self._device_mapping = device_mapping
+        self._num_devices = len(device_mapping)
         self._channel_to_id = {v["channel"]: i for i, (_, v) in enumerate(self._device_mapping.items())}
         self._device = "EMG"
 
@@ -131,6 +132,10 @@ class ViconProducer(Producer):
                 else:
                     print("Vicon frame grabbing timed out, reconnecting.", flush=True)
                     return False
+        print(
+            "Vicon received some frames.",
+            flush=True,
+        )
 
         devices = self._client.GetDeviceNames()
         # Keep only EMG. This device was renamed in the Nexus SDK.
@@ -143,6 +148,10 @@ class ViconProducer(Producer):
                     lambda x: (x[0], int(re.findall(r"\d+", x[0])[0])),
                     self._client.GetDeviceOutputDetails("EMG"),
                 )
+            )
+            print(
+                "EMG devices connected.",
+                flush=True,
             )
             return True
         else:
@@ -173,7 +182,11 @@ class ViconProducer(Producer):
                 )
                 values[self._channel_to_id[self._devices[output_name]]] = subsamples
 
-            sample_block = np.array(values, dtype=np.float64).T
+            # NOTE: `sample_block` may be empty, but Vicon will report missing batch of sample -> keep to correctly post-process.
+            if not all(values):
+                sample_block = np.array([[np.nan]*self._num_devices], dtype=np.float64)
+            else:
+                sample_block = np.array(values, dtype=np.float64).T
 
             data = {
                 "emg": sample_block,
