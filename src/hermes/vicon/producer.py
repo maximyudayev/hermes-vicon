@@ -190,7 +190,7 @@ class ViconProducer(Producer):
 
             data = {
                 "emg": sample_block,
-                "counter": np.array([[frame_number]], dtype=np.uint32),
+                "counter": np.zeros([sample_block.shape[0], 1], dtype=np.uint32) + frame_number,
                 "toa_s": np.zeros([sample_block.shape[0], 1], dtype=np.float64) + toa_s,
             }
             self._publish(process_time_s=get_time(), new_data={"vicon_data": data})
